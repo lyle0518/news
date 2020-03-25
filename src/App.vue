@@ -25,4 +25,10 @@ i,
 em {
   font-style: normal;
 }
+input,
+button {
+  background: none;
+  outline: none;
+  border: none;
+}
 </style>

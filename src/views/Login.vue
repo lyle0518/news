@@ -5,6 +5,12 @@
       <span class="iconfont iconnew iconlogo"></span>
       <span class="iconfont iconicon-test test"></span>
     </div>
+    <form>
+      <input type="text" placeholder="用户名/手机号码" />
+      <input type="text" placeholder="昵称" />
+      <input type="password" name="password" id placeholder="密码" />
+      <button>登录</button>
+    </form>
   </div>
 </template>
 
@@ -45,6 +51,24 @@
 .logo .test {
   position: absolute;
   top: 7px;
-  left: 7px;
+  left: 10px;
+}
+form {
+  text-align: center;
+}
+input {
+  width: 298px;
+  height: 20px;
+  font-size: 18px;
+  line-height: 18px;
+  border-bottom: 1px solid #757575;
+  padding: 10px;
+}
+button {
+  width: 318px;
+  height: 48px;
+  border-radius: 50px;
+  background-color: #cc3300;
+  margin-top: 66px;
 }
 </style>
