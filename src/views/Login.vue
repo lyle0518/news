@@ -1,74 +1,89 @@
 <template>
   <div class="box">
-    <div class="head"></div>
-    <div class="logo">
-      <span class="iconfont iconnew iconlogo"></span>
-      <span class="iconfont iconicon-test test"></span>
+    <div class="back">
+      <span class="iconfont iconicon-test"></span>
     </div>
-    <form>
-      <input type="text" placeholder="用户名/手机号码" />
-      <input type="text" placeholder="昵称" />
-      <input type="password" name="password" id placeholder="密码" />
-      <button>登录</button>
-    </form>
+    <div class="logo">
+      <span class="iconfont iconnew"></span>
+    </div>
+    <!-- 使用vant表单 -->
+    <van-form @submit="onSubmit">
+      <van-field
+        v-model="username"
+        name="用户名"
+        label="用户名"
+        placeholder="用户名"
+        :rules="[{ required: true, message: '请填写用户名' }]"
+      />
+      <van-field
+        v-model="password"
+        type="password"
+        name="密码"
+        label="密码"
+        placeholder="密码"
+        :rules="[{ required: true, message: '请填写密码' }]"
+      />
+      <div style="margin: 16px;">
+        <van-button round block type="info" native-type="submit">
+          提交
+        </van-button>
+      </div>
+    </van-form>
   </div>
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      form: {
+        username: "",
+        password: ""
+      }
+    };
+  },
+  methods: {
+    handleclick() {
+      this.$axios({
+        url: "http://127.0.0.1:3000/login",
+        method: "post",
+        data: this.form
+      }).then(res => {
+        const { message } = res.data;
+        this.$toast.success(message);
+      });
+    }
+  }
+};
 </script>
 
-<style>
-@media screen and (width: 750px) {
-  /* 把750分成10份，每一份是75，就让75作为一个rem */
-  html {
-    font-size: 36px;
-  }
-}
-@media screen and (width: 360px) {
-  /* 把375分成10份，每一份就是37.5，这是一个rem */
-  html {
-    font-size: 36px;
-  }
-}
+<style lang="less">
 .box {
-  width: 10rem;
+  padding: 20 / 360 * 100vw;
 }
-.head {
-  width: 10rem;
-  height: 0.666667rem;
-  background-color: #757575;
+.back span {
+  font-size: 27 / 360 * 100vw;
+  line-height: 1;
 }
 .logo {
-  position: relative;
   text-align: center;
 }
-.logo .iconlogo {
-  font-size: 3.452055rem;
-  width: 3.452055rem;
+.logo span {
+  font-size: 126 / 360 * 100vw;
   color: red;
-  margin: 0 auto;
 }
-.logo .test {
-  position: absolute;
-  top: 7px;
-  left: 10px;
+.form input {
+  width: 100%;
+  font-size: 16px;
+  line-height: 50 / 360 * 100vw;
+  border-bottom: 1px solid #000;
 }
-form {
-  text-align: center;
-}
-input {
-  width: 298px;
-  height: 20px;
-  font-size: 18px;
-  line-height: 18px;
-  border-bottom: 1px solid #757575;
-  padding: 10px;
-}
-button {
-  width: 318px;
-  height: 48px;
-  border-radius: 50px;
+.form button {
   background-color: #cc3300;
-  margin-top: 66px;
+  color: #fff;
+  width: 100%;
+  height: 48 / 360 * 100vw;
+  border-radius: 50px;
+  margin-top: 65 / 360 * 100vw;
 }
 </style>
