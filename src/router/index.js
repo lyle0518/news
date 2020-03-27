@@ -25,6 +25,8 @@ const router = new VueRouter({
   routes
 });
 router.beforeEach((to, from, next) => {
+  // console.log(to);
+
   if (to.path === "/personal") {
     const userJson = JSON.parse(localStorage.getItem("userInfo")) || [];
     if (userJson.token) {

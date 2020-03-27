@@ -1,9 +1,13 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
+// 全局的方式引入vant组件 1
 import Vant from "vant";
+
 import axios from "axios";
 import { Dialog } from "vant";
+// 全局的方式引入vant组件 2
+
 Vue.use(Vant);
 Vue.use(Dialog);
 
