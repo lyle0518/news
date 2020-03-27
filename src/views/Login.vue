@@ -23,15 +23,11 @@
         placeholder="密码"
         :rules="[{ required: true, message: '请填写密码' }]"
       />
-      <div style="margin: 16px;">
-        <van-button round block type="info" native-type="submit">
-          提交
-        </van-button>
+      <div>
+        <van-button round block type="info" native-type="submit">提交</van-button>
       </div>
       <router-link to="/register">
-        <van-button round block class="link-register">
-          注册
-        </van-button>
+        <van-button round block class="link-register">注册</van-button>
       </router-link>
     </van-form>
   </div>
@@ -50,8 +46,10 @@ export default {
   methods: {
     // 按钮点击发送请求
     onSubmit(values) {
+      // console.log(values);
+
       this.$axios({
-        url: "http://127.0.0.1:3000/login",
+        url: "/login",
         method: "post",
         data: this.form
       }).then(res => {
@@ -63,7 +61,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .box {
   padding: 20 / 360 * 100vw;
 }
@@ -81,6 +79,7 @@ export default {
 .form {
   .van-cell {
     padding: 10px 0;
+    font-size: 16px;
     margin-bottom: 20 / 360 * 100vw;
   }
   // button {
@@ -96,12 +95,13 @@ export default {
     left: 0;
   }
   .van-button--info {
-    margin-top: 50 /360 * 100vw;
+    margin-top: 50 / 360 * 100vw;
     background-color: #cc3300;
     border: 1px solid #cc3300;
   }
   .link-register {
     margin-top: 20 / 360 * 100vw;
+    // background-color: blue;
   }
 }
 </style>
