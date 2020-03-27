@@ -26,6 +26,8 @@
     </div>
     <!-- 列表按钮-->
     <Listbar v-for="(item, index) in rows" :label="item.label" :tips="item.tips" :key="index"></Listbar>
+    <!-- 这是子组件,如果直接注册点击事件无法执行 -->
+    <Listbar @click.native="handleclick" label="退出"></Listbar>
   </div>
 </template>
 
@@ -34,6 +36,24 @@ import Listbar from "@/components/Listbar";
 // 引入时间处理工具库
 import moment from "moment";
 export default {
+  methods: {
+    handleclick() {
+      this.$dialog
+        .confirm({
+          title: "提示",
+          message: "确定退出吗"
+        })
+        // 确认按钮
+        .then(() => {
+          localStorage.removeItem("userInfo");
+          this.$router.replace("/login");
+        })
+        // 取消按钮
+        .catch(() => {
+          // on cancel
+        });
+    }
+  },
   data() {
     return {
       rows: [
