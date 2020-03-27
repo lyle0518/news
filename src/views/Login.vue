@@ -53,8 +53,12 @@ export default {
         method: "post",
         data: this.form
       }).then(res => {
-        const { message } = res.data;
+        const { message, data } = res.data;
         this.$toast.success(message);
+        //存储token值到本地
+        localStorage.setItem("userInfo", JSON.stringify(data));
+        // 跳转处理
+        this.$router.push("/Personal");
       });
     }
   }

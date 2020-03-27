@@ -1,9 +1,9 @@
 <template>
   <div class="listbar">
     <router-link to="#">
-      <div>我的关注</div>
+      <div>{{label}}</div>
       <div class="tips">
-        关注的用户
+        {{title}}
         <span class="iconfont iconjiantou1"></span>
       </div>
     </router-link>
@@ -11,7 +11,10 @@
 </template>
 
 <script>
-export default {};
+export default {
+  // 接收来自Person父组件传的data值
+  props: ["label", "title"]
+};
 </script>
 
 <style lang='less' scoped>

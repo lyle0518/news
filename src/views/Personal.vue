@@ -17,15 +17,35 @@
       <span class="iconfont iconjiantou1"></span>
     </div>
     <!-- 列表按钮-->
-    <Listbar></Listbar>
-    <Listbar></Listbar>
-    <Listbar></Listbar>
+    <Listbar v-for="(item,index) in rows" :label="item.label" :title="item.title" :key="index"></Listbar>
   </div>
 </template>
 
 <script>
 import Listbar from "@/components/Listbar";
 export default {
+  data() {
+    return {
+      rows: [
+        {
+          label: "我的关注",
+          tips: "关注的用户"
+        },
+        {
+          label: "我的跟帖",
+          tips: "跟帖/回复"
+        },
+        {
+          label: "我的收藏",
+          tips: "文章/视频"
+        },
+        {
+          label: "设置",
+          tips: ""
+        }
+      ]
+    };
+  },
   // 注册组件Listbar
   components: {
     Listbar
