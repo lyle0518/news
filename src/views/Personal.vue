@@ -8,7 +8,7 @@
       <!-- 姓名 -->
       <div class="profile">
         <div class="avatar">
-          <span class="iconfont iconxingbienan"></span>
+          <span class="iconfont iconxingbienan nan"></span>
           广州新闻
         </div>
         <p>2020-03-27</p>
@@ -17,7 +17,7 @@
       <span class="iconfont iconjiantou1"></span>
     </div>
     <!-- 列表按钮-->
-    <Listbar v-for="(item,index) in rows" :label="item.label" :title="item.title" :key="index"></Listbar>
+    <Listbar v-for="(item,index) in rows" :label="item.label" :tips="item.tips" :key="index"></Listbar>
   </div>
 </template>
 
@@ -43,14 +43,31 @@ export default {
           label: "设置",
           tips: ""
         }
-      ]
+      ],
+      userInfo: {}
     };
   },
   // 注册组件Listbar
   components: {
     Listbar
   },
-  mounted() {}
+  mounted() {
+    const urlStr = JSON.parse(localStorage.getItem("userInfo"));
+
+    console.log(urlStr);
+    this.$axios({
+      url: "/user/" + urlStr.user.id,
+      headers: {
+        Authorization: urlStr.token
+      }
+    }).then(res => {
+      // console.log(res);
+      // this.userInfo = res.data.data;
+      const { data } = res.data;
+      this.userInfo = data;
+      console.log(this.userInfo);
+    });
+  }
 };
 </script>
 

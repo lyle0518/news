@@ -3,7 +3,7 @@
     <router-link to="#">
       <div>{{label}}</div>
       <div class="tips">
-        {{title}}
+        {{tips}}
         <span class="iconfont iconjiantou1"></span>
       </div>
     </router-link>
@@ -13,7 +13,7 @@
 <script>
 export default {
   // 接收来自Person父组件传的data值
-  props: ["label", "title"]
+  props: ["label", "tips"]
 };
 </script>
 
@@ -28,6 +28,9 @@ export default {
     border-bottom: 1px solid #eee;
     align-items: center;
     padding-right: 20 / 360 * 100vw;
+    .tips {
+      color: #a1a1a1;
+    }
   }
 }
 </style>
