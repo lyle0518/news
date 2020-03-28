@@ -17,7 +17,9 @@
         <p>{{ moment(userInfo.create_date).format("YYYY-MM-DD") }}</p>
       </div>
       <!-- 右侧箭头 -->
-      <span class="iconfont iconjiantou1"></span>
+      <router-link to="/Edit">
+        <span class="iconfont iconjiantou1"></span>
+      </router-link>
     </div>
     <!-- 列表按钮-->
     <Listbar v-for="(item, index) in rows" :label="item.label" :tips="item.tips" :key="index"></Listbar>
