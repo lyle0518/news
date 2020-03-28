@@ -1,6 +1,7 @@
 <template>
   <!-- 顶部导航条 -->
   <div class="nav">
+    <!-- 给导航栏添加返回上一页功能 -->
     <span class="iconfont iconjiantou2"></span>
     <strong>{{title}}</strong>
     <span class="iconfont iconshouye" v-if="showHome==true"></span>
@@ -10,7 +11,7 @@
 
 <script>
 export default {
-  props: ["title", "showHome"]
+  props: ["title", "showHome", "back"]
 };
 </script>
 

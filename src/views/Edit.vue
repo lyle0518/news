@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 导航栏 -->
-    <Nav title="编辑信息"></Nav>
+    <Nav title="编辑信息" @click.native="handleBack(back)" :back="back"></Nav>
     <!-- 头像 -->
     <div class="userImg">
       <img :src="$axios.defaults.baseURL+user.head_img" alt />
@@ -41,6 +41,7 @@ import Listbar from "@/components/Listbar";
 export default {
   data() {
     return {
+      back: true,
       //axios请求回来的数据
       user: {},
       //本地的数据
@@ -80,6 +81,12 @@ export default {
   },
 
   methods: {
+    handleBack(back) {
+      console.log(back);
+      if (back) {
+        this.$router.back();
+      }
+    },
     afterRead(file) {
       // 此时可以自行将文件上传至服务器
       //   从本地拿token值
