@@ -11,7 +11,7 @@
 
 <script>
 export default {
-  props: ["title", "showHome", "back"]
+  props: ["title", "showHome"]
 };
 </script>
 

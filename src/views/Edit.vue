@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 导航栏 -->
-    <Nav title="编辑信息" @click.native="handleBack(back)" :back="back"></Nav>
+    <Nav title="编辑信息" @click.native="handleBack(true)"></Nav>
     <!-- 头像 -->
     <div class="userImg">
       <img :src="$axios.defaults.baseURL+user.head_img" alt />
@@ -41,7 +41,6 @@ import Listbar from "@/components/Listbar";
 export default {
   data() {
     return {
-      back: true,
       //axios请求回来的数据
       user: {},
       //本地的数据
