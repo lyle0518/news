@@ -1,11 +1,6 @@
 <template>
   <div class="container">
-    <!-- 顶部导航条 -->
-    <div class="nav">
-      <span class="iconfont iconjiantou2"></span>
-      <strong>个人中心</strong>
-      <span class="iconfont iconshouye"></span>
-    </div>
+    <Nav title="个人中心" :showHome="true"></Nav>
     <div class="header">
       <!-- 头像 -->
       <div class="img">
@@ -35,6 +30,8 @@
 import Listbar from "@/components/Listbar";
 // 引入时间处理工具库
 import moment from "moment";
+// 引入nav导航栏子组件
+import Nav from "@/components/Nav";
 export default {
   methods: {
     handleclick() {
@@ -80,7 +77,8 @@ export default {
   },
   // 注册组件Listbar
   components: {
-    Listbar
+    Listbar,
+    Nav
   },
   mounted() {
     const urlStr = JSON.parse(localStorage.getItem("userInfo"));
@@ -103,17 +101,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-.nav {
-  padding: 20/ 360 * 100vw;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  line-height: 10 / 360 * 100vw;
-  border: 1px solid #eee;
-  .iconshouye {
-    font-size: 20px;
-  }
-}
 .header {
   padding: 20 / 360 * 100vw;
   display: flex;

@@ -16,7 +16,21 @@ Vue.prototype.$axios = axios;
 axios.defaults.baseURL = "http://localhost:3000";
 
 Vue.config.productionTip = false;
+router.beforeEach((to, from, next) => {
+  // console.log(to);
 
+  if (to.path === "/personal") {
+    const userJson = JSON.parse(localStorage.getItem("userInfo")) || {};
+    if (userJson.token) {
+      next();
+    } else {
+      next("/login");
+    }
+  } else {
+    //非进入个人中心页面
+    next();
+  }
+});
 new Vue({
   router,
   render: h => h(App)
