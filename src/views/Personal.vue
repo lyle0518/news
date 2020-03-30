@@ -22,7 +22,13 @@
       </router-link>
     </div>
     <!-- 列表按钮-->
-    <Listbar v-for="(item, index) in rows" :label="item.label" :tips="item.tips" :key="index"></Listbar>
+    <Listbar
+      v-for="(item, index) in rows"
+      :label="item.label"
+      :tips="item.tips"
+      :path="item.path"
+      :key="index"
+    ></Listbar>
     <!-- 这是子组件,如果直接注册点击事件无法执行 -->
     <Listbar @click.native="handleclick" label="退出"></Listbar>
   </div>
@@ -58,15 +64,18 @@ export default {
       rows: [
         {
           label: "我的关注",
-          tips: "关注的用户"
+          tips: "关注的用户",
+          path: "/fllow"
         },
         {
           label: "我的跟帖",
-          tips: "跟帖/回复"
+          tips: "跟帖/回复",
+          path: "/comment"
         },
         {
           label: "我的收藏",
-          tips: "文章/视频"
+          tips: "文章/视频",
+          path: "/star"
         },
         {
           label: "设置",

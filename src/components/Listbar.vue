@@ -1,6 +1,6 @@
 <template>
   <div class="listbar">
-    <router-link to="#">
+    <router-link :to="path||'#'">
       <div>{{label}}</div>
       <div class="tips">
         {{tips}}
@@ -13,7 +13,7 @@
 <script>
 export default {
   // 接收来自Person父组件传的data值
-  props: ["label", "tips"]
+  props: ["label", "tips", "path"]
 };
 </script>
 

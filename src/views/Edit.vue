@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Nav title="编辑资料"></Nav>
+    <Nav title="编辑资料" @click.native="hadleback"></Nav>
     <!-- 头像 -->
     <div class="headImg">
       <img :src="$axios.defaults.baseURL+user.head_img" alt />
@@ -72,6 +72,9 @@ export default {
     });
   },
   methods: {
+    hadleback() {
+      this.$router.back();
+    },
     afterRead(file) {
       // 此时可以自行将文件上传至服务器
       console.log(file);
@@ -118,7 +121,7 @@ export default {
     },
 
     handleEdit(data, fn) {
-      this.$axios({
+      return this.$axios({
         url: "/user_update/" + this.user.id,
         headers: {
           Authorization: this.userInfo.token
@@ -129,9 +132,14 @@ export default {
     },
 
     handleChangeNickname() {
-      this.handleEdit({ nickname: this.nickname }, this.changeOther);
+      const request = this.handleEdit(
+        { nickname: this.nickName },
+        this.changeOther
+      );
       // 修改昵称后更改第一次获取数据返显的user中的nickname,做数据在本地的更新
-      this.user.nickname = this.nickName;
+      request.then(() => {
+        this.user.nickname = this.nickName;
+      });
     },
     handleCancelNickname() {
       // 取消按钮时输入框中的默认昵称改回原样
@@ -139,16 +147,21 @@ export default {
     },
     // 修改密码
     handleChangepassword() {
-      this.handleEdit({ password: this.password }, this.changePassword);
+      const request = this.handleEdit(
+        { password: this.password },
+        this.changePassword
+      );
     },
     onSelect(item) {
       // 默认情况下点击选项时不会自动收起
       // 可以通过 close-on-click-action 属性开启自动收起
       this.showGender = false;
       // 修改数据库数据
-      this.handleEdit({ gender: item.value });
+      const request = this.handleEdit({ gender: item.value }, this.changeOther);
       // 修改user中返显的gender值
-      this.user.gender = item.value;
+      request.then(() => {
+        this.user.gender = item.value;
+      });
     }
   },
   // 修改数据库数据

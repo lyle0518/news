@@ -20,6 +20,18 @@ const routes = [
   {
     path: "/edit",
     component: () => import("@/views/Edit")
+  },
+  {
+    path: "/fllow",
+    component: () => import("@/views/Fllow")
+  },
+  {
+    path: "/comment",
+    component: () => import("@/views/Comment")
+  },
+  {
+    path: "/star",
+    component: () => import("@/views/Star")
   }
 ];
 
