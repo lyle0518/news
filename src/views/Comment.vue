@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 导航栏 -->
-    <Nav title="我的跟帖"></Nav>
+    <Nav title="我的跟帖" @click.native="handleBack"></Nav>
     <!-- 评论区 -->
     <div class="comment_list" v-for="(item,index) in comment" :key="index">
       <div class="time">{{moment(item.create_date).format("YYYY-MM-DD hh:mm")}}</div>
@@ -54,6 +54,11 @@ export default {
   },
   components: {
     Nav
+  },
+  methods: {
+    handleBack() {
+      this.$router.back();
+    }
   }
 };
 </script>

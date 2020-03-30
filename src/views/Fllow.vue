@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 导航栏 -->
-    <Nav title="我的关注"></Nav>
+    <Nav title="我的关注" @click.native="handleBack"></Nav>
     <!-- 关注列表 -->
     <div class="floowList">
       <div class="list" v-for="(item,index) in fllow" :key="index">
@@ -30,6 +30,7 @@ export default {
       moment
     };
   },
+
   mounted() {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     this.userInfo = userInfo;
@@ -47,6 +48,9 @@ export default {
     Nav
   },
   methods: {
+    handleBack() {
+      this.$router.back();
+    },
     unfollow(id, index) {
       this.$axios({
         url: "/user_unfollow/" + id,
