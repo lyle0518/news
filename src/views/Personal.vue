@@ -18,7 +18,7 @@
       </div>
       <!-- 右侧箭头 -->
       <router-link to="/Edit">
-        <span class="iconfont iconjiantou1"></span>
+        <span class="icon iconjiantou1"></span>
       </router-link>
     </div>
     <!-- 列表按钮-->
