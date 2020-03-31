@@ -15,23 +15,38 @@ const routes = [
   },
   {
     path: "/personal",
-    component: () => import("@/views/Personal")
+    component: () => import("@/views/Personal"),
+    meta: {
+      authorization: true
+    }
   },
   {
     path: "/edit",
-    component: () => import("@/views/Edit")
+    component: () => import("@/views/Edit"),
+    meta: {
+      authorization: true
+    }
   },
   {
     path: "/fllow",
-    component: () => import("@/views/Fllow")
+    component: () => import("@/views/Fllow"),
+    meta: {
+      authorization: true
+    }
   },
   {
     path: "/comment",
-    component: () => import("@/views/Comment")
+    component: () => import("@/views/Comment"),
+    meta: {
+      authorization: true
+    }
   },
   {
     path: "/star",
-    component: () => import("@/views/Star")
+    component: () => import("@/views/Star"),
+    meta: {
+      authorization: true
+    }
   }
 ];
 
