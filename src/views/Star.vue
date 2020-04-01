@@ -10,6 +10,7 @@
         </div>
         <img :src="$axios.defaults.baseURL+item.cover[0].url" alt />
       </div>
+      <!-- 第二种模板 -->
       <div class="star2" v-if="item.cover.length>3">
         <p class="title">林志玲穿透视黑纱裙米兰看秀腹部微隆显孕味</p>
         <div class="Img">
@@ -20,8 +21,6 @@
         <p class="author">火星时报 52跟帖</p>
       </div>
     </div>
-
-    <!-- 第二种模板 -->
   </div>
 </template>
 
@@ -64,12 +63,15 @@ export default {
   justify-content: space-between;
   border-bottom: 1px solid #e4e4e4;
   .text {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     .title {
       font-size: 16px;
     }
     .author {
       font-size: 13px;
-      margin-top: 20/360 * 100px;
+      margin-top: 30/360 * 100px;
       color: #868686;
     }
   }

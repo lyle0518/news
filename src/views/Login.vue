@@ -52,14 +52,18 @@ export default {
         url: "/login",
         method: "post",
         data: this.form
-      }).then(res => {
-        const { message, data } = res.data;
-        this.$toast.success(message);
-        //存储token值到本地
-        localStorage.setItem("userInfo", JSON.stringify(data));
-        // 跳转处理
-        this.$router.push("/Personal");
-      });
+      })
+        .then(res => {
+          const { message, data } = res.data;
+          this.$toast.success(message);
+          //存储token值到本地
+          localStorage.setItem("userInfo", JSON.stringify(data));
+          // 跳转处理
+          this.$router.push("/Personal");
+        })
+        .catch(res => {
+          this.this.form.password = "";
+        });
     }
   }
 };
