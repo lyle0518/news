@@ -15,11 +15,11 @@
         <van-tab v-for="(item,index) in categories" :title="item.name" :key="index">
           <!-- 更新加载 -->
           <van-list
-            v-model="loading"
-            :finished="finished"
+            :immediate-check="false"
+            v-model="categories[active].loading"
+            :finished="categories[active].finished"
             finished-text="没有更多了"
             @load="onLoad"
-            :immediate-check="false"
           >
             <div v-for="(item,index) in categories[active].posts" :key="index">
               <PostItem1
@@ -55,7 +55,8 @@ export default {
       active: 0,
       categoryId: 999,
       loading: false, // 是否正在加载中
-      finished: false
+      finished: false,
+      refreshing: false
     };
   },
   mounted() {
@@ -81,7 +82,7 @@ export default {
       this.categories = categories;
       // 本地如果有categories, 给每个加上一个pageIndex;
       this.handleCategories();
-      console.log(this.categories);
+      // console.log(this.categories);
     } else {
       this.getCategories(token);
     }
@@ -109,7 +110,7 @@ export default {
         return;
       }
       // 当点击不同栏目,active值变化,获取对应的id重新发送文章渲染请求
-      console.log(this.active);
+      // console.log(this.active);
 
       this.getList();
     }
@@ -117,10 +118,14 @@ export default {
   methods: {
     // 给每个栏目都加一个pageIndex独立值,做文章独立的加载
     handleCategories() {
-      this.categories.forEach(v => {
+      this.categories = this.categories.map(v => {
         v.pageIndex = 1;
         // 隔离各自文章列表的list
         v.posts = [];
+        // 独立的加载状态
+        v.loading = false;
+        v.finished = false;
+        return v;
       });
       // console.log(this.categories);
     },
@@ -140,13 +145,14 @@ export default {
         });
         this.categories = data;
         // 请求的时候直接给每个栏目加上一个pageIndex
-        this.handleCategories();
         localStorage.setItem("categories", JSON.stringify(data));
+        this.handleCategories();
       });
     },
     onLoad() {
       // console.log("已经拖动到了底部");
       // 拉到底部,将pageIndex值加1之后重新请求新的list列表并且进行合并
+
       this.categories[this.active].pageIndex += 1;
       // console.log(this.categories);
       // 重新发送请求获取新的lis下一页的文章数据
@@ -155,8 +161,12 @@ export default {
     // 封装点击栏目请求文章的方法
     // 获取各自的当前页面
     getList() {
-      const { pageIndex, id, posts } = this.categories[this.active];
-      console.log(id);
+      // 如果对应的finised已经为true结束请求
+      if (this.categories[this.active].finished) {
+        return;
+      }
+      const { pageIndex, id } = this.categories[this.active];
+      // console.log(id);
 
       this.$axios({
         url: "/post",
@@ -167,14 +177,22 @@ export default {
         }
       }).then(res => {
         const { data, total } = res.data;
+
         // 旧文章列表和新请求的文章列表进行合并
         // console.log(this.list);
 
-        this.categories[this.active].posts = [...posts, ...data];
+        this.categories[this.active].posts = [
+          ...this.categories[this.active].posts,
+          ...data
+        ];
+
+        this.categories[this.active].loading = false;
         this.categories = [...this.categories];
-        this.loading = false;
+        console.log(this.categories[this.active].posts);
+
         if (this.categories[this.active].posts.length === total) {
-          this.finished = true;
+          this.categories[this.active].finished = true;
+          console.log(111);
         }
       });
     },
