@@ -1,15 +1,17 @@
 <template>
   <div class="star1">
     <div class="text">
-      <p class="title">林志玲穿透视黑纱裙米兰看秀腹部微隆显孕味</p>
-      <p class="author">火星时报 52跟帖</p>
+      <p class="title">{{data.title}}</p>
+      <p class="author">{{data.user.nickname}} {{data.comment_length}}跟帖</p>
     </div>
-    <img src="https://www.baidu.com/img/baidu_jgylogo3.gif" alt />
+    <img :src="$axios.defaults.baseURL + data.cover[0].url" alt />
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: ["data"]
+};
 </script>
 
 <style scoped lang='less'>

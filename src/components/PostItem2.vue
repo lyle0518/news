@@ -1,17 +1,22 @@
 <template>
   <div class="star2">
-    <p class="title">亚马逊雨林为何燃烧？除了新总统“急功近利”的开发，国际资本才是真凶</p>
+    <p class="title">{{data.title}}</p>
     <div class="Img">
-      <img src="https://www.baidu.com/img/baidu_jgylogo3.gif" alt />
-      <img src="https://www.baidu.com/img/baidu_jgylogo3.gif" alt />
-      <img src="https://www.baidu.com/img/baidu_jgylogo3.gif" alt />
+      <img
+        v-for="(item,index) in data.cover"
+        :key="index"
+        :src="$axios.defaults.baseURL + item.url"
+        alt
+      />
     </div>
-    <p class="author">火星时报 52跟帖</p>
+    <p class="author">{{data.user.nickname}} {{data.comment_length}}跟帖</p>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: ["data"]
+};
 </script>
 
 <style spoced lang='less'>

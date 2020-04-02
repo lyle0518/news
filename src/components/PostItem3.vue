@@ -1,21 +1,20 @@
 <template>
   <div class="videoList">
-    <p class="title">美军与英军联合训练 6机编队阵容强大</p>
+    <p class="title">{{data.title}}</p>
     <div class="video">
-      <img
-        src="https://img11.360buyimg.com/pop/s590x470_jfs/t1/106361/27/16760/92283/5e7da713E57959706/6d9ad70447582ecc.jpg.webp"
-        alt
-      />
+      <img :src="$axios.defaults.baseURL + data.cover[0].url" alt />
       <div class="cover">
         <span class="iconfont iconshipin"></span>
       </div>
     </div>
-    <p class="author">火星时报 52跟帖</p>
+    <p class="author">{{data.user.nickname}} {{data.comment_length}}跟帖</p>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: ["data"]
+};
 </script>
 
 <style scoped lang='less'>
