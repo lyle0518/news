@@ -21,7 +21,7 @@
             @load="onLoad"
             :immediate-check="false"
           >
-            <div v-for="(item,index) in list" :key="index">
+            <div v-for="(item,index) in categories[active].posts" :key="index">
               <PostItem1
                 :data="item"
                 v-if="item.type===1&&item.cover.length>0&&item.cover.length<3"
@@ -50,7 +50,7 @@ export default {
   data() {
     return {
       // 请求到的文章数据
-      list: [],
+      // list: [],
       categories: [],
       active: 0,
       categoryId: 999,
@@ -96,7 +96,8 @@ export default {
     }).then(res => {
       const { data } = res.data;
       // console.log(data);
-      this.list = data;
+      this.categories[this.active].posts = data;
+      this.categories = [...this.categories];
     });
   },
   watch: {
@@ -108,6 +109,8 @@ export default {
         return;
       }
       // 当点击不同栏目,active值变化,获取对应的id重新发送文章渲染请求
+      console.log(this.active);
+
       this.getList();
     }
   },
@@ -116,6 +119,8 @@ export default {
     handleCategories() {
       this.categories.forEach(v => {
         v.pageIndex = 1;
+        // 隔离各自文章列表的list
+        v.posts = [];
       });
       // console.log(this.categories);
     },
@@ -150,8 +155,8 @@ export default {
     // 封装点击栏目请求文章的方法
     // 获取各自的当前页面
     getList() {
-      const { pageIndex, id } = this.categories[this.active];
-      // console.log(id);
+      const { pageIndex, id, posts } = this.categories[this.active];
+      console.log(id);
 
       this.$axios({
         url: "/post",
@@ -163,11 +168,12 @@ export default {
       }).then(res => {
         const { data, total } = res.data;
         // 旧文章列表和新请求的文章列表进行合并
-        console.log(this.list);
+        // console.log(this.list);
 
-        this.list = [...this.list, ...data];
+        this.categories[this.active].posts = [...posts, ...data];
+        this.categories = [...this.categories];
         this.loading = false;
-        if (this.list.length === total) {
+        if (this.categories[this.active].posts.length === total) {
           this.finished = true;
         }
       });
