@@ -53,18 +53,32 @@ export default {
       // list: [],
       categories: [],
       active: 0,
-      categoryId: 999,
-      loading: false, // 是否正在加载中
-      finished: false,
+      // categoryId: 999,
+      // loading: false, // 是否正在加载中
+      // finished: false,
       refreshing: false
     };
+  },
+  watch: {
+    active() {
+      //   console.log(111);
+      //   active会随着点击栏目返回对应的索引值
+      if (this.active === this.categories.length - 1) {
+        this.$router.push("/管理栏");
+        return;
+      }
+      // 当点击不同栏目,active值变化,获取对应的id重新发送文章渲染请求
+      // console.log(this.active);
+
+      this.getList();
+    }
   },
   mounted() {
     // 请求前判断本地是否有存储栏目数据
     const categories = JSON.parse(localStorage.getItem("categories"));
     // 获取本地的登录状态做栏目区别
     const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
-    this.active = 1;
+
     // 登录状态-token 如果有token但是没有关注列表，重新请求更新this.categories
     if (categories) {
       // 登录并且本地是有categories,第一个栏目就应该是关注
@@ -90,7 +104,7 @@ export default {
     this.$axios({
       url: "/post",
       params: {
-        category: this.categoryId,
+        category: this.categories[this.active].id,
         pageIndex: 1,
         pageSize: 5
       }
@@ -101,20 +115,7 @@ export default {
       this.categories = [...this.categories];
     });
   },
-  watch: {
-    active() {
-      //   console.log(111);
-      //   active会随着点击栏目返回对应的索引值
-      if (this.active === this.categories.length - 1) {
-        this.$router.push("/管理栏");
-        return;
-      }
-      // 当点击不同栏目,active值变化,获取对应的id重新发送文章渲染请求
-      // console.log(this.active);
 
-      this.getList();
-    }
-  },
   methods: {
     // 给每个栏目都加一个pageIndex独立值,做文章独立的加载
     handleCategories() {
@@ -234,8 +235,9 @@ export default {
 }
 
 /deep/.van-tabs__nav {
+  position: static;
   background-color: #eee;
-  margin-right: 43px !important;
+  // margin-right: 43px !important;
   font-size: 18px !important;
 }
 /deep/ .van-tab {
@@ -245,18 +247,18 @@ export default {
 }
 
 /deep/ .van-tab:nth-last-child(2) {
-  position: fixed;
+  position: absolute;
   width: 44px;
   height: 44px;
   display: flex;
   justify-content: center;
   align-items: center;
   right: 0;
-  top: 49 /360 * 100vw;
+  top: 0;
   padding-bottom: 10px;
   background: #eee;
   z-index: 0;
-  .van-tab__text {
+  /deep/.van-tab__text {
     display: flex;
     // position: absolute;
     // top: 10px;
@@ -270,6 +272,13 @@ export default {
     // padding: 20/360 * 100vw;
     // flex-basis: 0% !important;
   }
+
   // font-size: 16px;
+}
+/deep/ .van-tabs__line {
+  display: none;
+}
+/deep/ .van-tab--active {
+  border-bottom: 1px #ff0000 solid;
 }
 </style>
