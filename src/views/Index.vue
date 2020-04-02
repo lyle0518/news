@@ -12,7 +12,7 @@
     </div>
     <div class="tabList">
       <van-tabs v-model="active" sticky swipeable>
-        <van-tab v-for="(item,index) in nav" :title="item" :key="index">
+        <van-tab v-for="(item,index) in categories" :title="item.name" :key="index">
           <!-- 更新加载 -->
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
             <div v-for="(item,index) in list" :key="index">
@@ -41,6 +41,7 @@ export default {
   data() {
     return {
       list: ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"],
+      categories: [],
       nav: [
         "关注",
         "头条",
@@ -61,11 +62,30 @@ export default {
       finished: false
     };
   },
+  mounted() {
+    // 请求前判断本地是否有存储栏目数据
+    const categories = JSON.parse(localStorage.getItem("categories"));
+    if (categories) {
+      this.categories = categories;
+      console.log(this.categories);
+    } else {
+      this.$axios({
+        url: "/category"
+      }).then(res => {
+        const { data } = res.data;
+        data.push({
+          name: ""
+        });
+        this.categories = data;
+        localStorage.setItem("categories", JSON.stringify(this.categories));
+      });
+    }
+  },
   watch: {
     active() {
       //   console.log(111);
       //   active会随着点击栏目返回对应的索引值
-      if (this.active === this.nav.length - 1) {
+      if (this.active === this.categories.length - 1) {
         this.$router.push("/管理栏");
       }
     }
