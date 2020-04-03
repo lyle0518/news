@@ -11,23 +11,20 @@
       </router-link>
     </div>
     <div class="tabList">
-      <van-tabs v-model="active" sticky swipeable>
-        <van-tab v-for="(item,index) in categories" :title="item.name" :key="index">
+      <van-tabs v-model="active" sticky swipeable @scroll="handleScroll">
+        <van-tab v-for="(item, index) in categories" :title="item.name" :key="index">
           <!-- 更新加载 -->
           <van-list
-            :immediate-check="false"
-            v-model="categories[active].loading"
-            :finished="categories[active].finished"
+            v-model="item.loading"
+            :finished="item.finished"
             finished-text="没有更多了"
             @load="onLoad"
+            immediate-check
           >
-            <div v-for="(item,index) in categories[active].posts" :key="index">
-              <PostItem1
-                :data="item"
-                v-if="item.type===1&&item.cover.length>0&&item.cover.length<3"
-              ></PostItem1>
-              <PostItem2 :data="item" v-if="item.type===1&&item.cover.length>=3"></PostItem2>
-              <PostItem3 :data="item" v-if="item.type === 2"></PostItem3>
+            <div v-for="(subitem, subindex) in item.posts" :key="subindex">
+              <PostItem1 :data="subitem" v-if="subitem.type===1&&subitem.cover.length<3"></PostItem1>
+              <PostItem2 :data="subitem" v-if="subitem.type===1&&subitem.cover.length>=3"></PostItem2>
+              <PostItem3 :data="subitem" v-if="subitem.type===2"></PostItem3>
             </div>
           </van-list>
         </van-tab>
@@ -51,13 +48,42 @@ export default {
     return {
       // 请求到的文章数据
       // list: [],
+      // 栏目表
       categories: [],
+      token: "",
+      // pageIndex: 1,
       active: 0,
       // categoryId: 999,
       // loading: false, // 是否正在加载中
       // finished: false,
       refreshing: false
     };
+  },
+  mounted() {
+    const categories = JSON.parse(localStorage.getItem("categories"));
+    const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
+    this.token = token;
+    // console.log(this.token);
+
+    if (categories) {
+      if (
+        (token && categories[0].name !== "关注") ||
+        (!token && categories[0].name === "关注")
+      ) {
+        // 如果本地有token但是没有关注列表的话,重新请求
+        // 如果本地没有token但是有关注列表,重新请求
+        this.getCategories();
+      } else {
+        // 如果本地有categories,并且本地没有token且没有关注
+        // 或者本地有token和关注列表,直接获取本地的数据
+        this.categories = categories;
+        // 给每个categories添加独立的页码
+        this.handleCategories();
+        // console.log(this.categories);
+      }
+    } else {
+      this.getCategories();
+    }
   },
   watch: {
     active() {
@@ -68,139 +94,97 @@ export default {
         return;
       }
       // 当点击不同栏目,active值变化,获取对应的id重新发送文章渲染请求
-      // console.log(this.active);
-
       this.getList();
+      setTimeout(() => {
+        window.scrollTo(0, this.categories[this.active].scrollY);
+      }, 0);
     }
   },
-  mounted() {
-    // 请求前判断本地是否有存储栏目数据
-    const categories = JSON.parse(localStorage.getItem("categories"));
-    // 获取本地的登录状态做栏目区别
-    const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
-
-    // 登录状态-token 如果有token但是没有关注列表，重新请求更新this.categories
-    if (categories) {
-      // 登录并且本地是有categories,第一个栏目就应该是关注
-      if (token && categories[0].name !== "关注") {
-        // 重新发请求把token传参证明为登录状态
-        this.getCategories(token);
-        return;
-      }
-      //如果本地没有token,但是第一栏又是关注
-      if (!token && categories[0].name === "关注") {
-        this.getCategories();
-        return;
-      }
-      // 讲本地的categories对象赋值到data用做渲染
-      this.categories = categories;
-      // 本地如果有categories, 给每个加上一个pageIndex;
-      this.handleCategories();
-      // console.log(this.categories);
-    } else {
-      this.getCategories(token);
-    }
-    // 页面加载请求文章列表,默认请求id为999的头条的栏目文章
-    this.$axios({
-      url: "/post",
-      params: {
-        category: this.categories[this.active].id,
-        pageIndex: 1,
-        pageSize: 5
-      }
-    }).then(res => {
-      const { data } = res.data;
-      // console.log(data);
-      this.categories[this.active].posts = data;
-      this.categories = [...this.categories];
-    });
-  },
-
   methods: {
-    // 给每个栏目都加一个pageIndex独立值,做文章独立的加载
-    handleCategories() {
-      this.categories = this.categories.map(v => {
-        v.pageIndex = 1;
-        // 隔离各自文章列表的list
-        v.posts = [];
-        // 独立的加载状态
-        v.loading = false;
-        v.finished = false;
-        return v;
-      });
-      // console.log(this.categories);
-    },
-
-    // 封装获取栏目的请求,判断是否有token值
-    getCategories(token) {
+    // 封装---请求栏目列表
+    getCategories() {
       const config = {
         url: "/category"
       };
-      if (token) {
-        config.headers = { Authorization: token };
+      if (this.token) {
+        config.headers = {
+          Authorization: this.token
+        };
       }
       this.$axios(config).then(res => {
+        // console.log(res);
         const { data } = res.data;
         data.push({
           name: ""
         });
         this.categories = data;
-        // 请求的时候直接给每个栏目加上一个pageIndex
-        localStorage.setItem("categories", JSON.stringify(data));
-        this.handleCategories();
+        localStorage.setItem("categories", JSON.stringify(this.categories));
+        // 将请到的数据新增独立的页码，文章列表，加载状态，完成状态，滚动栏
+        ories();
+        this.handleCateg;
       });
     },
+    // 给每个栏目添加独立的pageIndex
+    handleCategories() {
+      this.categories.forEach(v => {
+        v.pageIndex = 1;
+        v.posts = [];
+        v.finished = false;
+        v.loading = false;
+        v.scrollY = 0;
+      });
+      this.getList();
+      console.log(this.categories);
+    },
     onLoad() {
-      // console.log("已经拖动到了底部");
-      // 拉到底部,将pageIndex值加1之后重新请求新的list列表并且进行合并
-
+      // 拉到页面底部讲pageIndex值加一重新发送请求文章,将文章进行拼接
       this.categories[this.active].pageIndex += 1;
-      // console.log(this.categories);
-      // 重新发送请求获取新的lis下一页的文章数据
       this.getList();
     },
-    // 封装点击栏目请求文章的方法
-    // 获取各自的当前页面
+    // 封装请求文章的请求方法
     getList() {
-      // 如果对应的finised已经为true结束请求
-      if (this.categories[this.active].finished) {
-        return;
-      }
-      const { pageIndex, id } = this.categories[this.active];
-      // console.log(id);
-
-      this.$axios({
+      const { pageIndex, id, posts, finished, name } = this.categories[
+        this.active
+      ];
+      if (finished) return;
+      const config = {
         url: "/post",
         params: {
-          pageIndex: pageIndex,
+          pageIndex,
           pageSize: 5,
           category: id
         }
-      }).then(res => {
+      };
+
+      // 判断是否请求的是关注栏目，关注栏目需要传token
+      if (name === "关注") {
+        config.headers = {
+          Authorization: this.token
+        };
+      }
+      this.$axios(config).then(res => {
+        // console.log(res);
         const { data, total } = res.data;
-
-        // 旧文章列表和新请求的文章列表进行合并
-        // console.log(this.list);
-
+        // 各自独立的列表拼接
         this.categories[this.active].posts = [
           ...this.categories[this.active].posts,
           ...data
         ];
+        this.categories = [...this.categories];
 
         this.categories[this.active].loading = false;
-        this.categories = [...this.categories];
-        console.log(this.categories[this.active].posts);
-
         if (this.categories[this.active].posts.length === total) {
+          console.log(1);
+
           this.categories[this.active].finished = true;
-          console.log(111);
         }
       });
     },
-    onRefresh() {
-      // 表示加载完毕	            // 表示加载完毕
-      this.refreshing = false;
-      // console.log("正在下拉刷新");
+    handleScroll(data) {
+      if (this.categories.length === 0) return;
+      const { scrollTop } = data;
+      // console.log(scrollTop);
+      this.categories[this.active].scrollY = scrollTop;
     }
   }
 };
