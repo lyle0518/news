@@ -6,7 +6,7 @@
         <span class="iconfont iconsearch"></span>
         <i>搜索新闻</i>
       </router-link>
-      <router-link to="#">
+      <router-link to="/login">
         <span class="iconfont iconwode"></span>
       </router-link>
     </div>
@@ -34,74 +34,31 @@
 </template>
 
 <script>
+// 文章列表的组件,只有单张图片的
 import PostItem1 from "@/components/PostItem1";
+// 大于等于3张图片的组件
 import PostItem2 from "@/components/PostItem2";
+// 视频的列表组件
 import PostItem3 from "@/components/PostItem3";
 
 export default {
-  components: {
-    PostItem1,
-    PostItem2,
-    PostItem3
-  },
   data() {
     return {
-      // 请求到的文章数据
-      // list: [],
-      // 栏目表
+      // 菜单的数据
       categories: [],
-      token: "",
-      // pageIndex: 1,
+      // 记录当前tab的切换的索引
       active: 0,
-      // categoryId: 999,
+      // 假设这个数组是后台返回的数据
+      // list: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], // 10个1
+      toekn: "",
       // loading: false, // 是否正在加载中
-      // finished: false,
-      refreshing: false
+      // finished: false, // 是否已经加载完毕
+      refreshing: false // 是否正在下拉加载
     };
   },
-  mounted() {
-    const categories = JSON.parse(localStorage.getItem("categories"));
-    const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
-    this.token = token;
-    // console.log(this.token);
 
-    if (categories) {
-      if (
-        (token && categories[0].name !== "关注") ||
-        (!token && categories[0].name === "关注")
-      ) {
-        // 如果本地有token但是没有关注列表的话,重新请求
-        // 如果本地没有token但是有关注列表,重新请求
-        this.getCategories();
-      } else {
-        // 如果本地有categories,并且本地没有token且没有关注
-        // 或者本地有token和关注列表,直接获取本地的数据
-        this.categories = categories;
-        // 给每个categories添加独立的页码
-        this.handleCategories();
-        // console.log(this.categories);
-      }
-    } else {
-      this.getCategories();
-    }
-  },
-  watch: {
-    active() {
-      //   console.log(111);
-      //   active会随着点击栏目返回对应的索引值
-      if (this.active === this.categories.length - 1) {
-        this.$router.push("/管理栏");
-        return;
-      }
-      // 当点击不同栏目,active值变化,获取对应的id重新发送文章渲染请求
-      this.getList();
-      setTimeout(() => {
-        window.scrollTo(0, this.categories[this.active].scrollY);
-      }, 0);
-    }
-  },
   methods: {
-    // 封装---请求栏目列表
+    // 请求栏目列表
     getCategories() {
       const config = {
         url: "/category"
@@ -112,41 +69,37 @@ export default {
         };
       }
       this.$axios(config).then(res => {
-        // console.log(res);
+        console.log(res);
         const { data } = res.data;
         data.push({
           name: ""
         });
         this.categories = data;
-        localStorage.setItem("categories", JSON.stringify(this.categories));
-        // 将请到的数据新增独立的页码，文章列表，加载状态，完成状态，滚动栏
-        ories();
-        this.handleCateg;
+        // 给categories挂载对立的数据
+        this.handleCategories();
+        // 默认请求第一个页面的文章
+        // this.categories = [...this.categories];
+        localStorage.setItem("categories", JSON.stringify(data));
       });
     },
-    // 给每个栏目添加独立的pageIndex
+    // 给栏目挂载各自的文章列表,页码,加载状态和加载完成的状态
     handleCategories() {
       this.categories.forEach(v => {
-        v.pageIndex = 1;
         v.posts = [];
+        v.pageIndex = 1;
         v.finished = false;
         v.loading = false;
-        v.scrollY = 0;
+        v.scroll = "";
       });
       this.getList();
-      console.log(this.categories);
     },
-    onLoad() {
-      // 拉到页面底部讲pageIndex值加一重新发送请求文章,将文章进行拼接
-      this.categories[this.active].pageIndex += 1;
-      this.getList();
-    },
-    // 封装请求文章的请求方法
+
+    // 文章请求封装
     getList() {
-      const { pageIndex, id, posts, finished, name } = this.categories[
-        this.active
-      ];
+      const { id, pageIndex, finished } = this.categories[this.active];
       if (finished) return;
+
+      // 关注列表的文章需要传token值
       const config = {
         url: "/post",
         params: {
@@ -155,27 +108,23 @@ export default {
           category: id
         }
       };
-
-      // 判断是否请求的是关注栏目，关注栏目需要传token
-      if (name === "关注") {
+      if (this.token) {
         config.headers = {
           Authorization: this.token
         };
       }
       this.$axios(config).then(res => {
-        // console.log(res);
         const { data, total } = res.data;
-        // 各自独立的列表拼接
+        // console.log(data);
         this.categories[this.active].posts = [
           ...this.categories[this.active].posts,
           ...data
         ];
-        this.categories = [...this.categories];
-
         this.categories[this.active].loading = false;
-        if (this.categories[this.active].posts.length === total) {
-          console.log(1);
+        this.categories = [...this.categories];
+        // console.log(total);
 
+        if (this.categories[this.active].posts.length === total) {
           this.categories[this.active].finished = true;
         }
       });
@@ -184,8 +133,62 @@ export default {
       if (this.categories.length === 0) return;
       const { scrollTop } = data;
       // console.log(scrollTop);
-      this.categories[this.active].scrollY = scrollTop;
+      this.categories[this.active].scroll = scrollTop;
+      console.log(this.categories);
+    },
+    onLoad() {
+      // console.log("已经拖动到了底部");
+      this.categories[this.active].pageIndex += 1;
+      this.getList();
+    },
+    onRefresh() {
+      // 表示加载完毕
+      this.refreshing = false;
+      console.log("正在下拉刷新");
     }
+  },
+  mounted() {
+    const categories = JSON.parse(localStorage.getItem("categories"));
+    const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
+    this.token = token;
+    if (categories) {
+      if (
+        (token && categories[0].name !== "关注") ||
+        (!token && categories[0].name === "关注")
+      ) {
+        this.getCategories();
+      } else {
+        this.categories = categories;
+        this.handleCategories();
+        // 默认请求第一个页面的文章
+      }
+    } else {
+      this.getCategories();
+    }
+    // console.log(this.categories);
+    // 进入页面发送请求获取文章 解析的id属于categories，异步执行，有可能还未获取到id
+    // this.getList()
+  },
+  // 监听属性
+  watch: {
+    // 监听tab栏的切换
+    active() {
+      // 判断如果点击的是最后一个图标，跳转到栏目管理页
+      if (this.active === this.categories.length - 1) {
+        this.$router.push("/栏目管理");
+        return;
+      }
+      this.getList();
+      // 需要等待数据渲染时间;
+      setTimeout(() => {
+        window.scrollTo(0, this.categories[this.active].scroll);
+      }, 10);
+    }
+  },
+  components: {
+    PostItem1,
+    PostItem2,
+    PostItem3
   }
 };
 </script>
@@ -221,7 +224,7 @@ export default {
 /deep/.van-tabs__nav {
   position: static;
   background-color: #eee;
-  // margin-right: 43px !important;
+  margin-right: 43px !important;
   font-size: 18px !important;
 }
 /deep/ .van-tab {
