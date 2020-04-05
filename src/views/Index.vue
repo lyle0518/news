@@ -12,7 +12,12 @@
     </div>
     <div class="tabList">
       <van-tabs v-model="active" sticky swipeable @scroll="handleScroll">
-        <van-tab v-for="(item, index) in categories" :title="item.name" :key="index">
+        <van-tab
+          v-for="(item, index) in categories"
+          :title="item.name"
+          :key="index"
+          v-if="item.is_top===1||item.name===''"
+        >
           <!-- 更新加载 -->
           <van-list
             v-model="item.loading"
@@ -90,15 +95,20 @@ export default {
         v.finished = false;
         v.loading = false;
         v.scroll = "";
+        v.isload = false;
       });
       this.getList();
     },
 
     // 文章请求封装
     getList() {
-      const { id, pageIndex, finished } = this.categories[this.active];
-      if (finished) return;
+      const { id, pageIndex, finished, isload } = this.categories[this.active];
+      console.log(isload);
 
+      if (isload) return;
+      this.categories[this.active].isload = true;
+      this.categories[this.active].pageIndex += 1;
+      if (finished) return;
       // 关注列表的文章需要传token值
       const config = {
         url: "/post",
@@ -127,6 +137,7 @@ export default {
         if (this.categories[this.active].posts.length === total) {
           this.categories[this.active].finished = true;
         }
+        this.categories[this.active].isload = false;
       });
     },
     handleScroll(data) {
@@ -134,11 +145,10 @@ export default {
       const { scrollTop } = data;
       // console.log(scrollTop);
       this.categories[this.active].scroll = scrollTop;
-      console.log(this.categories);
+      // console.log(this.categories);
     },
     onLoad() {
       // console.log("已经拖动到了底部");
-      this.categories[this.active].pageIndex += 1;
       this.getList();
     },
     onRefresh() {
@@ -174,8 +184,11 @@ export default {
     // 监听tab栏的切换
     active() {
       // 判断如果点击的是最后一个图标，跳转到栏目管理页
-      if (this.active === this.categories.length - 1) {
-        this.$router.push("/栏目管理");
+      const arr = this.categories.filter(v => {
+        return v.is_top || v.name === "";
+      });
+      if (this.active === arr.length - 1) {
+        this.$router.push("/category");
         return;
       }
       this.getList();

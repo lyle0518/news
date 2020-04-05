@@ -7,57 +7,61 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    component: () => import("@/views/Index")
+    component: () => import("@/views/Index"),
   },
   {
     path: "/login",
-    component: () => import("@/views/Login")
+    component: () => import("@/views/Login"),
   },
   {
     path: "/register",
-    component: () => import("@/views/Register")
+    component: () => import("@/views/Register"),
   },
   {
     path: "/personal",
     component: () => import("@/views/Personal"),
     meta: {
-      authorization: true
-    }
+      authorization: true,
+    },
   },
   {
     path: "/edit",
     component: () => import("@/views/Edit"),
     meta: {
-      authorization: true
-    }
+      authorization: true,
+    },
   },
   {
     path: "/fllow",
     component: () => import("@/views/Fllow"),
     meta: {
-      authorization: true
-    }
+      authorization: true,
+    },
   },
   {
     path: "/comment",
     component: () => import("@/views/Comment"),
     meta: {
-      authorization: true
-    }
+      authorization: true,
+    },
   },
   {
     path: "/star",
     component: () => import("@/views/Star"),
     meta: {
-      authorization: true
-    }
-  }
+      authorization: true,
+    },
+  },
+  {
+    path: "/category",
+    component: () => import("@/views/Category"),
+  },
 ];
 
 const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
-  routes
+  routes,
 });
 
 export default router;
