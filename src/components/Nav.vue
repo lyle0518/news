@@ -2,7 +2,7 @@
   <!-- 顶部导航条 -->
   <div class="nav">
     <!-- 给导航栏添加返回上一页功能 -->
-    <span class="iconfont iconjiantou2"></span>
+    <span class="iconfont iconjiantou2" @click="handleBack(back)"></span>
     <strong>{{title}}</strong>
     <router-link to="/">
       <span class="iconfont iconshouye" v-if="showHome==true"></span>
@@ -13,7 +13,13 @@
 
 <script>
 export default {
-  props: ["title", "showHome"]
+  props: ["title", "showHome", "back"],
+  methods: {
+    handleBack(back) {
+      if (!back) return;
+      this.$router.back();
+    }
+  }
 };
 </script>
 
