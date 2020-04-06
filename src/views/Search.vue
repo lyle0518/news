@@ -2,7 +2,13 @@
   <div class="box">
     <div class="nav">
       <span class="iconfont iconjiantou2" @click="$router.back()"></span>
-      <input type="text" placeholder="请输入搜索关键字" v-model="value" @keyup.enter="handleSearch" />
+      <input
+        type="text"
+        placeholder="请输入搜索关键字"
+        autofocus
+        v-model="value"
+        @keyup.enter="handleSearch"
+      />
       <span class="searchBtn">搜索</span>
       <span class="iconfont iconsearch"></span>
     </div>

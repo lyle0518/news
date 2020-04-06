@@ -58,8 +58,9 @@ export default {
           this.$toast.success(message);
           //存储token值到本地
           localStorage.setItem("userInfo", JSON.stringify(data));
+          const { return_url } = this.$route.query;
           // 跳转处理
-          this.$router.push("/Personal");
+          this.$router.replace(return_url || "/Personal");
         })
         .catch(res => {
           this.this.form.password = "";

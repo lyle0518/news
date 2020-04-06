@@ -60,6 +60,10 @@ const routes = [
     path: "/search",
     component: () => import("@/views/Search"),
   },
+  {
+    path: "/post/:id",
+    component: () => import("@/views/Post"),
+  },
 ];
 
 const router = new VueRouter({

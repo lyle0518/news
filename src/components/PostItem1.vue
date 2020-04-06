@@ -1,11 +1,11 @@
 <template>
-  <div class="star1">
+  <router-link :to="`/post/${data.id}`" class="star1">
     <div class="text">
       <p class="title">{{data.title}}</p>
       <p class="author">{{data.user.nickname}} {{data.comment_length}}跟帖</p>
     </div>
     <img :src="$axios.defaults.baseURL + data.cover[0].url" alt />
-  </div>
+  </router-link>
 </template>
 
 <script>

@@ -16,6 +16,7 @@ Vue.prototype.$axios = axios;
 axios.defaults.baseURL = "http://localhost:3000";
 
 Vue.config.productionTip = false;
+let app;
 
 router.beforeEach((to, from, next) => {
   // console.log(to);
@@ -33,21 +34,31 @@ router.beforeEach((to, from, next) => {
   }
 });
 axios.interceptors.response.use(
-  function(response) {
+  function (response) {
     // 对响应数据做点什么
     return response;
   },
-  error => {
+  (error) => {
     // 对响应错误做点什么
     console.log(error.response);
     const { statusCode, message } = error.response.data;
     if (statusCode === 400) {
       Toast.fail(message);
     }
+    if (statusCode === 403) {
+      Toast.fail(message);
+      app.$router.push({
+        path: "/login",
+        // path: "/login",
+        query: {
+          return_url: app.$route.path,
+        },
+      });
+    }
     return Promise.reject(error);
   }
 );
-new Vue({
+app = new Vue({
   router,
-  render: h => h(App)
+  render: (h) => h(App),
 }).$mount("#app");
