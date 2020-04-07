@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- <button @click="$toast('弹窗测试')">测试弹窗</button> -->
-    <keep-alive include="index">
+    <keep-alive include="index,search">
       <router-view />
     </keep-alive>
   </div>

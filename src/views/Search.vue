@@ -9,7 +9,7 @@
         v-model="value"
         @keyup.enter="handleSearch"
       />
-      <span class="searchBtn">搜索</span>
+      <span class="searchBtn" @click="handleSearch">搜索</span>
       <span class="iconfont iconsearch"></span>
     </div>
     <div class="history">
@@ -59,6 +59,7 @@ import PostItem2 from "@/components/PostItem2";
 import PostItem3 from "@/components/PostItem3";
 
 export default {
+  name: "search",
   components: {
     PostItem1,
     PostItem2,
@@ -79,6 +80,15 @@ export default {
       showLayer: false,
       list: []
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      // 通过 `vm` 访问组件实例
+      if (from.path === "/") {
+        vm.showLayer = false;
+        vm.value = "";
+      }
+    });
   },
   methods: {
     handleSearch() {
