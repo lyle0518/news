@@ -137,13 +137,13 @@ export default {
 
 <style scoped lang='less'>
 .box {
-  padding: 10/360 * 100vw;
+  // padding: 10/360 * 100vw;
   .nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20/360 * 100vw;
-
+    padding: 10/360 * 100vw;
     .nav_left {
       .iconnew {
         display: inline-block;
@@ -173,14 +173,19 @@ export default {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 10px;
+    padding: 0 10/360 * 100vw;
   }
   .author {
     font-size: 12px;
+    padding: 0 10/360 * 100vw;
     margin-bottom: 20px;
   }
+
   .content {
     line-height: 24px;
     font-size: 14px;
+    padding: 0 10/360 * 100vw;
+
     /deep/ img {
       max-width: 100%;
     }
@@ -207,14 +212,16 @@ export default {
     }
   }
   .footer {
-    // position: absolute;
+    position: relative;
     left: 0;
+    right: 0;
     bottom: 0;
     display: flex;
     align-items: center;
     border-top: 1px solid #ddd;
+    margin-top: 100px;
     // width: 100%;
-    padding: 10/360 * 100vw 20/360 * 100vw;
+    padding: 20/360 * 100vw 0 20/360 * 100vw 10/360 * 100vw;
     background-color: #ffffff;
     // height: 50/360 * 100vw;
     .comment-input {
