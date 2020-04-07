@@ -19,7 +19,7 @@
 
     <div class="actions">
       <div class="actions-item">
-        <span class="iconfont icondianzan"></span>
+        <span class="iconfont icondianzan" @click="handleLike"></span>
         <i>{{Number(post.has_like)}}</i>
       </div>
       <div class="actions-item">
@@ -34,7 +34,11 @@
         <i>{{post.comment_length>100?'99+': post.comment_length }}</i>
       </div>
       <div class="icous">
-        <span class="iconfont iconshoucang" :class="post.has_star ? 'star_active':''"></span>
+        <span
+          class="iconfont iconshoucang"
+          @click="handleStar"
+          :class="post.has_star ? 'star_active':''"
+        ></span>
       </div>
       <div class="icous">
         <span class="iconfont iconfenxiang"></span>
@@ -51,16 +55,25 @@ export default {
       post: {
         user: ""
       },
+      token: "",
       moment,
       id: ""
     };
   },
   mounted() {
+    // 请求文章的时候添加token值才可以实现关注功能
     const { id } = this.$route.params;
-    // this.id = id;
-    this.$axios({
+    this.id = id;
+    const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
+    this.token = token;
+    const config = {
       url: "/post/" + id
-    }).then(res => {
+    };
+    if (token) {
+      config.headers = { Authorization: token };
+    }
+    // this.id = id;
+    this.$axios(config).then(res => {
       const { data } = res.data;
       console.log(data);
       this.post = data;
@@ -69,16 +82,53 @@ export default {
   methods: {
     //   关注/取消关注
     handleFllow() {
-      const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
+      let url = "";
+      if (this.post.has_follow) {
+        // 如果为true，就是已经关注了，所以要执行取消操作
+        url = "/user_unfollow/" + this.post.user.id;
+      } else {
+        // 如果为false，则为未关注，执行关注操作
+        url = "/user_follows/" + this.post.user.id;
+      }
       this.$axios({
-        url: "/user_follows/" + this.post.user.id,
+        url,
         headers: {
-          Authorization: token
+          Authorization: this.token
         }
       }).then(res => {
         console.log(res);
-        this.post.has_follow = true;
-        this.$toast.success("关注成功");
+
+        this.post.has_follow = !this.post.has_follow;
+        this.$toast.success(res.data.message);
+      });
+    },
+    handleLike() {
+      this.$axios({
+        url: "/post_like/" + this.id,
+        headers: {
+          Authorization: this.token
+        }
+      }).then(res => {
+        console.log(res);
+        this.post.has_like = !this.post.has_like;
+        if (this.post.has_like) {
+          // true,已经关注，加1
+          this.post.like_length += 1;
+        } else {
+          this.post.like_length -= 1;
+        }
+        this.$toast.success(res.data.message);
+      });
+    },
+    handleStar() {
+      this.$axios({
+        url: "/post_star/" + this.id,
+        headers: {
+          Authorization: this.token
+        }
+      }).then(res => {
+        this.post.has_star = !this.post.has_star;
+        this.$toast.success(res.data.message);
       });
     }
   }
@@ -157,15 +207,15 @@ export default {
     }
   }
   .footer {
-    position: fixed;
+    // position: absolute;
     left: 0;
     bottom: 0;
     display: flex;
     align-items: center;
     border-top: 1px solid #ddd;
-    width: 100%;
+    // width: 100%;
     padding: 10/360 * 100vw 20/360 * 100vw;
-
+    background-color: #ffffff;
     // height: 50/360 * 100vw;
     .comment-input {
       //   flex: 1;

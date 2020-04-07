@@ -1,5 +1,5 @@
 <template>
-  <div class="star2">
+  <router-link :to="`/post/${data.id}`" class="star2">
     <p class="title">{{data.title}}</p>
     <div class="Img">
       <img
@@ -10,7 +10,7 @@
       />
     </div>
     <p class="author">{{data.user.nickname}} {{data.comment_length}}跟帖</p>
-  </div>
+  </router-link>
 </template>
 
 <script>
