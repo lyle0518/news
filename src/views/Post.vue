@@ -27,7 +27,7 @@
         <i>微信</i>
       </div>
     </div>
-    <div class="footer">
+    <!-- <div class="footer">
       <div class="comment-input">发布评论</div>
       <div class="icous">
         <span class="iconfont iconpinglun-"></span>
@@ -43,13 +43,18 @@
       <div class="icous">
         <span class="iconfont iconfenxiang"></span>
       </div>
-    </div>
+    </div>-->
+    <Footer :post="post"></Footer>
   </div>
 </template>
 
 <script>
 import moment from "moment";
+import Footer from "@/components/Footer";
 export default {
+  components: {
+    Footer
+  },
   data() {
     return {
       post: {
@@ -119,18 +124,18 @@ export default {
         }
         this.$toast.success(res.data.message);
       });
-    },
-    handleStar() {
-      this.$axios({
-        url: "/post_star/" + this.id,
-        headers: {
-          Authorization: this.token
-        }
-      }).then(res => {
-        this.post.has_star = !this.post.has_star;
-        this.$toast.success(res.data.message);
-      });
     }
+    // handleStar() {
+    //   this.$axios({
+    //     url: "/post_star/" + this.id,
+    //     headers: {
+    //       Authorization: this.token
+    //     }
+    //   }).then(res => {
+    //     this.post.has_star = !this.post.has_star;
+    //     this.$toast.success(res.data.message);
+    //   });
+    // }
   }
 };
 </script>

@@ -29,7 +29,7 @@
       </div>
     </div>
     <!-- 底部 -->
-    <div class="footer">
+    <!-- <div class="footer">
       <div class="comment-input">发布评论</div>
       <div class="icous">
         <span class="iconfont iconpinglun-"></span>
@@ -45,12 +45,18 @@
       <div class="icous">
         <span class="iconfont iconfenxiang"></span>
       </div>
-    </div>
+    </div>-->
+    <!-- 封装底部组件 -->
+    <Footer :post="post"></Footer>
   </div>
 </template>
 
 <script>
+import Footer from "@/components/Footer";
 export default {
+  components: {
+    Footer
+  },
   data() {
     return {
       url: "",
