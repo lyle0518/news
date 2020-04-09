@@ -62,7 +62,15 @@ export default {
       refreshing: false // 是否正在下拉加载
     };
   },
-
+  beforeRouteEnter(to, from, next) {
+    if (from.path === "/category") {
+      next(vm => {
+        vm.active = 0;
+      });
+    } else {
+      next();
+    }
+  },
   methods: {
     // 请求栏目列表
     getCategories() {
@@ -75,7 +83,7 @@ export default {
         };
       }
       this.$axios(config).then(res => {
-        console.log(res);
+        // console.log(res);
         const { data } = res.data;
         data.push({
           name: ""
@@ -104,8 +112,7 @@ export default {
     // 文章请求封装
     getList() {
       const { id, pageIndex, finished, isload } = this.categories[this.active];
-      console.log(isload);
-
+      // console.log(isload);
       if (isload) return;
       this.categories[this.active].isload = true;
       this.categories[this.active].pageIndex += 1;
@@ -155,13 +162,17 @@ export default {
     onRefresh() {
       // 表示加载完毕
       this.refreshing = false;
-      console.log("正在下拉刷新");
+      // console.log("正在下拉刷新");
     }
   },
   mounted() {
+    // console.log(111);
+
     const categories = JSON.parse(localStorage.getItem("categories"));
     const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
     this.token = token;
+
+    // }
     if (categories) {
       if (
         (token && categories[0].name !== "关注") ||
@@ -184,6 +195,8 @@ export default {
   watch: {
     // 监听tab栏的切换
     active() {
+      // console.log(this.active);
+
       // 判断如果点击的是最后一个图标，跳转到栏目管理页
       const arr = this.categories.filter(v => {
         return v.is_top || v.name === "";
