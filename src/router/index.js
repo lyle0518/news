@@ -68,6 +68,10 @@ const routes = [
     path: "/post_video/:id",
     component: () => import("@/views/Post_video"),
   },
+  {
+    path: "/postcomment/:id",
+    component: () => import("@/views/Postcomment"),
+  },
 ];
 
 const router = new VueRouter({
