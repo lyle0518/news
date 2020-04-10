@@ -4,6 +4,7 @@
     <van-list
       v-model="loading"
       :finished="finished"
+      :autosize="!isFocus"
       finished-text="没有更多了"
       :immediate-check="false"
       @load="onLoad"
@@ -18,24 +19,28 @@
               <p class="time">{{moment(item.user.create_date).fromNow()}}</p>
             </div>
           </div>
-          <span class="user-right">回复</span>
+          <span class="user-right" @click="handleReply(item)">回复</span>
         </div>
-        <!-- 第二级 -->
-        <!-- <div class="comment-dom">
-        <div class="user">
-          <div class="user-left">
-            <span class="id">1</span>
-            <span class="name">火星网友1</span>
-            <span class="time">2小时前</span>
-          </div>
-          <div class="user-right">回复</div>
-        </div>
-        <span>文章说的很有道理</span>
-        </div>-->
-        <CommentFloor :data="item.parent" v-if="item.parent"></CommentFloor>
+        <!-- item.parent有多少层数据，CommentFloor就自调用多少次 -->
+        <CommentFloor :data="item.parent" v-if="item.parent" @reply="handleReply"></CommentFloor>
         <span class="reply">{{item.content}}</span>
       </div>
     </van-list>
+    <div class="footer">
+      <van-field
+        v-model="message"
+        :rows="row"
+        type="textarea"
+        :autosize="!isFocus"
+        :placeholder="reply.user?'回复@'+reply.user.nickname:'说点什么...'"
+        class="textarea"
+        :class="isFocus?'active':''"
+        @focus="handleFocus"
+        @blur="handleBlur"
+        ref="textarea"
+      />
+      <span class="submit" v-if="isFocus" @click="handleSubmit">发布</span>
+    </div>
   </div>
 </template>
 
@@ -53,7 +58,12 @@ export default {
       loading: false,
       finished: false,
       pageIndex: 1,
-      pageSize: 5
+      pageSize: 5,
+      message: "",
+      row: 1,
+      // 处理输入框的弹起，true为弹起
+      isFocus: false,
+      reply: {}
     };
   },
   components: {
@@ -66,6 +76,55 @@ export default {
     this.getList();
   },
   methods: {
+    handleReply(item) {
+      // 回复功能
+      setTimeout(() => {
+        // 弹起输入框
+        this.isFocus = true;
+        this.reply = item;
+        // 自动聚焦  在要操控的元素中新增ref属性，值为自定义,在业务中运用this.$refs.定义值操控dom元素
+        this.$refs.textarea.focus();
+      }, 100);
+    },
+    handleFocus() {
+      this.isFocus = true;
+    },
+    // 延迟失去焦点隐藏
+    handleBlur() {
+      setTimeout(() => {
+        this.isFocus = false;
+        if (this.message.trim() === "") {
+          this.reply = {};
+        }
+      }, 100);
+    },
+    // 提交回复
+    handleSubmit() {
+      if (this.message.trim() === "") return;
+      const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
+      const data = {
+        content: this.message
+      };
+      if (this.reply.id) {
+        data.parent_id = this.reply.id;
+      }
+      this.$axios({
+        url: "/post_comment/" + this.id,
+        method: "POST",
+        headers: {
+          Authorization: token
+        },
+        data
+      }).then(res => {
+        this.$toast.success("发布成功");
+        this.message = "";
+        // 处理新评论的渲染
+        this.post = [];
+        this.pageIndex = 1;
+        this.getList();
+        this.reply = {};
+      });
+    },
     getList() {
       this.$axios({
         url: `/post_comment/${this.id}`,
@@ -145,5 +204,38 @@ export default {
   .reply {
     font-size: 14px;
   }
+}
+.footer {
+  position: fixed;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 5/360 * 100vw 15/360 * 100vw;
+  box-sizing: border-box;
+  background: #fff;
+
+  .textarea {
+    background-color: #d7d7d7 !important;
+    border-radius: 20px;
+    width: 100%;
+    padding: 5px 20px;
+  }
+}
+.active {
+  height: 82px !important;
+  border-radius: 8px;
+}
+.submit {
+  background-color: red;
+
+  margin-left: 10/360 * 100vw;
+  border-radius: 20/360 * 100vw;
+  color: #fff;
+  font-size: 12px;
+  flex-shrink: 0;
+  padding: 3px 10px;
 }
 </style>

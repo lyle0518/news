@@ -51,7 +51,7 @@ export default {
     handleAdd(item, index) {
       this.arrDom.splice(index, 1);
       item.is_top = 1;
-      console.log(item.is_top);
+      // console.log(item.is_top);
 
       this.arrTop.push(item);
       // this.arrTop = [...this.arrTop];
@@ -64,7 +64,7 @@ export default {
       ...this.arrDom,
       this.categories[this.categories.length - 1]
     ];
-    console.log(this.categories);
+    // console.log(this.categories);
 
     localStorage.setItem("categories", JSON.stringify(this.categories));
   },
@@ -75,8 +75,8 @@ export default {
     });
     this.arrDom = this.categories.filter(v => {
       return v.is_top === 0;
-      console.log("arrTop", this.arrTop);
-      console.log("arrDom", this.arrDom);
+      // console.log("arrTop", this.arrTop);
+      // console.log("arrDom", this.arrDom);
     });
   }
 };

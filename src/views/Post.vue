@@ -80,7 +80,11 @@ export default {
     // this.id = id;
     this.$axios(config).then(res => {
       const { data } = res.data;
-      console.log(data);
+      data.content = data.content.replace(
+        /http:\/\/localhost:3000/gi,
+        this.$axios.defaults.baseURL
+      );
+      // console.log(data);
       this.post = data;
     });
   },

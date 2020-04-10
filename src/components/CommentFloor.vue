@@ -6,10 +6,12 @@
         <span class="name">{{data.user.nickname}}</span>
         <span class="time">{{moment(data.create_date).fromNow()}}</span>
       </div>
-      <div class="user-right">回复</div>
+      <!-- 触发父组件的方法 -->
+      <div class="user-right" @click="handleReply(data)">回复</div>
     </div>
     <!-- 调用第三级 -->
-    <componentFloor v-if="data.parent" :data="data.parent"></componentFloor>
+    <!-- 传递函数到组件 -->
+    <CommentFloor v-if="data.parent" :data="data.parent" @reply="handleReply"></CommentFloor>
     <span class="reply">{{data.content}}</span>
   </div>
 </template>
@@ -23,6 +25,14 @@ export default {
     return {
       moment
     };
+  },
+  methods: {
+    // 父组件传递过来的方法
+    handleReply(data) {
+      // 接受父组件传递过来的方法
+      // 传值给父组件参数item
+      this.$emit("reply", data);
+    }
   }
 };
 </script>

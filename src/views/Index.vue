@@ -66,12 +66,36 @@ export default {
     if (from.path === "/category") {
       next(vm => {
         vm.active = 0;
+        // 如果是从栏目管理回退的,重新执行一次请求初始化页面
+        vm.reload();
       });
     } else {
       next();
     }
   },
   methods: {
+    // 初始化页面的方法
+    reload() {
+      const categories = JSON.parse(localStorage.getItem("categories"));
+      const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
+      this.token = token;
+
+      // }
+      if (categories) {
+        if (
+          (token && categories[0].name !== "关注") ||
+          (!token && categories[0].name === "关注")
+        ) {
+          this.getCategories();
+        } else {
+          this.categories = categories;
+          this.handleCategories();
+          // 默认请求第一个页面的文章
+        }
+      } else {
+        this.getCategories();
+      }
+    },
     // 请求栏目列表
     getCategories() {
       const config = {
@@ -166,27 +190,8 @@ export default {
     }
   },
   mounted() {
+    this.reload();
     // console.log(111);
-
-    const categories = JSON.parse(localStorage.getItem("categories"));
-    const { token } = JSON.parse(localStorage.getItem("userInfo")) || {};
-    this.token = token;
-
-    // }
-    if (categories) {
-      if (
-        (token && categories[0].name !== "关注") ||
-        (!token && categories[0].name === "关注")
-      ) {
-        this.getCategories();
-      } else {
-        this.categories = categories;
-        this.handleCategories();
-        // 默认请求第一个页面的文章
-      }
-    } else {
-      this.getCategories();
-    }
     // console.log(this.categories);
     // 进入页面发送请求获取文章 解析的id属于categories，异步执行，有可能还未获取到id
     // this.getList()
